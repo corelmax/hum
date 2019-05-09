@@ -9,12 +9,15 @@ import (
 type DeploymentTemplate struct {
 	Registry   string
 	AppVersion string
+	AppName    string
 }
 
 func main() {
 	var deploymentFile string
+	var appName string
 	var appVersion string
 	var registry string
+	flag.StringVar(&appName, "appName", "", "specific app's name to deploy")
 	flag.StringVar(&appVersion, "appVersion", "latest", "specific app's version to deploy")
 	flag.StringVar(&deploymentFile, "f", "", "specific deployment template")
 	flag.StringVar(&registry, "registry", "github.com", "registry url")
@@ -27,6 +30,7 @@ func main() {
 	}
 
 	deployment := DeploymentTemplate{
+		AppName:    appName,
 		AppVersion: appVersion,
 		Registry:   registry,
 	}
