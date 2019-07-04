@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"strings"
 	"text/template"
 )
 
@@ -14,13 +15,22 @@ type DeploymentTemplate struct {
 
 func main() {
 	var deploymentFile string
-	var appName string
-	var appVersion string
-	var registry string
-	flag.StringVar(&appName, "appName", "", "specific app's name to deploy")
-	flag.StringVar(&appVersion, "appVersion", "latest", "specific app's version to deploy")
+	// var appName string
+	// var appVersion string
+	// var registry string
+
+	args := make(map[string]string)
+	for _, s := range os.Environ() {
+		split := strings.Split(s, "=")
+		args[split[0]] = split[1]
+	}
+
+	// fmt.Println(args["USER"])
+
+	// flag.StringVar(&appName, "appName", "", "specific app's name to deploy")
+	// flag.StringVar(&appVersion, "appVersion", "latest", "specific app's version to deploy")
 	flag.StringVar(&deploymentFile, "f", "", "specific deployment template")
-	flag.StringVar(&registry, "registry", "github.com", "registry url")
+	// flag.StringVar(&registry, "registry", "github.com", "registry url")
 
 	flag.Parse()
 
@@ -29,11 +39,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	deployment := DeploymentTemplate{
-		AppName:    appName,
-		AppVersion: appVersion,
-		Registry:   registry,
-	}
+	// deployment := DeploymentTemplate{
+	// 	AppName:    appName,
+	// 	AppVersion: appVersion,
+	// 	Registry:   registry,
+	// }
 
 	var tpl *template.Template
 	var err error
@@ -42,7 +52,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := tpl.Execute(os.Stdout, deployment); err != nil {
+	if err := tpl.Execute(os.Stdout, args); err != nil {
 		panic(err)
 	}
 }

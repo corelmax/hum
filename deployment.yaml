@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.APP_NAME}} 
+spec:
+  selector:
+    matchLabels:
+      app: ooca-api-gateway 
+  template:
+    metadata:
+      labels:
+        app: ooca-api-gateway 
+    spec:
+      containers:
+      - name: ooca-api-gateway 
+        image: {{.APP_REGISTRY}}/ooca-api-gateway:{{.APP_VERSION}}
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 3005
+        env:
+          - name: NODE_ENV
+            value: production
+        volumeMounts:
+          - name: config-map
+            mountPath: /app/config/
+      volumes: 
+      - name: config-map
+        configMap:
+          name: ooca-api-gateway
