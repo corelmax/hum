@@ -1,18 +1,16 @@
-FROM golang:alpine
+FROM golang:1.16-alpine
 
 RUN apk add --no-cache \
     curl \
     git \
     make
 
-# install dep
-RUN OUTPUT_BIN=/usr/local/go/bin/dep \
-    && curl --connect-timeout 60 -sSLo $OUTPUT_BIN https://github.com/golang/dep/releases/download/v0.5.1/dep-linux-amd64 \
-    && chmod 755 $OUTPUT_BIN
-RUN wget -O - https://github.com/corelmax/hum/archive/0.0.4.tar.gz | tar xvzf -
-RUN mkdir /bin-hum
-RUN cd hum* \
-    && export GOPATH=$GOPATH:$PWD \
-    && make \
-    && cp ./bin/* /bin/
-ENTRYPOINT [ "hum" ]
+# RUN mkdir -p /hum
+# RUN curl -s -L https://github.com/corelmax/hum/archive/0.0.5.tar.gz | tar -xvz -C /hum
+
+# RUN cp /hum/hum-0.0.5/bin/* /bin/
+WORKDIR /hum
+ADD . .
+RUN make
+RUN cp ./bin/* /bin/
+ENTRYPOINT [ "sh", "-c" ]

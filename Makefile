@@ -16,4 +16,4 @@ all:	build
 build:	$(BINARIES)
 
 $(BINARIES):	$(SOURCES)
-	$(GO) build -o ./bin/$@
+	$(GO) build -o ./bin/$@ ./src
