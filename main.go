@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"flag"
+	"io"
+	"io/fs"
 	"os"
 	"strings"
 	"text/template"
@@ -34,22 +37,32 @@ func main() {
 
 	flag.Parse()
 
-	if deploymentFile == "" {
-		flag.Usage()
-		os.Exit(1)
-	}
-
-	// deployment := DeploymentTemplate{
-	// 	AppName:    appName,
-	// 	AppVersion: appVersion,
-	// 	Registry:   registry,
-	// }
-
 	var tpl *template.Template
 	var err error
+	var info fs.FileInfo
 
-	if tpl, err = template.ParseFiles(deploymentFile); err != nil {
+	if info, err = os.Stdin.Stat(); err != nil {
 		panic(err)
+	}
+
+	if deploymentFile == "" || deploymentFile == "-" {
+		if info.Size() == 0 {
+			flag.Usage()
+			os.Exit(1)
+		} else {
+			reader := bufio.NewReader(os.Stdin)
+			buffer := new(strings.Builder)
+			if _, err := io.Copy(buffer, reader); err != nil {
+				panic(err)
+			}
+			if tpl, err = template.New("stdin").Parse(buffer.String()); err != nil {
+				panic(err)
+			}
+		}
+	} else {
+		if tpl, err = template.ParseFiles(deploymentFile); err != nil {
+			panic(err)
+		}
 	}
 
 	if err := tpl.Execute(os.Stdout, args); err != nil {
