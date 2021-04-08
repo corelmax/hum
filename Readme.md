@@ -19,5 +19,6 @@ Usage of ./bin/hum:
         specific deployment template
   -registry string
         registry url (default "github.com")
-bigdevs:@hum 🌱  $ 
+bigdevs:@hum 🌱  $ export TEST_VAR=hello
+bigdevs:@hum 🌱  $ hum -f template.yaml
 ```
