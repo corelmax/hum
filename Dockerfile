@@ -13,4 +13,4 @@ WORKDIR /hum
 ADD . .
 RUN make
 RUN cp ./bin/* /bin/
-ENTRYPOINT [ "sh", "-c" ]
+ENTRYPOINT [ "hum" ]
